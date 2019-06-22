@@ -1,3 +1,3 @@
 [samples]()
 =======
-**sample project for spring boot and other project.**
+**Sample project for spring boot and other project.**
