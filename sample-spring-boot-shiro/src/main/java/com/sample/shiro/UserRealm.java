@@ -1,5 +1,9 @@
 package com.sample.shiro;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.sample.shiro.common.exception.ServiceException;
+import com.sample.shiro.infrastructure.domain.model.User;
+import com.sample.shiro.infrastructure.domain.repository.UserRepository;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -10,9 +14,13 @@ import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ObjectUtils;
 
 @Component
 public class UserRealm extends AuthorizingRealm {
+
+    @Autowired
+    private UserRepository userRepository;
 
     /**
      * 授权(验证权限时调用)
@@ -31,11 +39,15 @@ public class UserRealm extends AuthorizingRealm {
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
         String userName = token.getPrincipal().toString();
-        if (userName.equals("admin")) {
-            AuthenticationInfo authInfo = new SimpleAuthenticationInfo("admin", "123456", getName());
-            return authInfo;
+        String password = new String((char[]) token.getCredentials());
+        User user = userRepository.getOne(new QueryWrapper<User>().eq("username", userName));
+        if (ObjectUtils.isEmpty(user)) {
+            throw new ServiceException("用户名错误");
         }
-        return null;
+        if (!user.getPassword().equals(password)) {
+            throw new ServiceException("密码错误");
+        }
+        return new SimpleAuthenticationInfo(userName, password, getName());
     }
 
 }
