@@ -38,6 +38,7 @@ public class ShiroConfig {
         map.put("/logout","logout");
         //对所有用户认证
         map.put("/**","authc");
+        map.put("/getUserInfo", "roles[admin]");
         //登录
         shiroFilterFactoryBean.setLoginUrl("/login");
         //首页

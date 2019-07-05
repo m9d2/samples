@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.sample.shiro.common.exception.ServiceException;
 import com.sample.shiro.infrastructure.domain.model.User;
 import com.sample.shiro.infrastructure.domain.repository.UserRepository;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -15,6 +16,9 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Component
 public class UserRealm extends AuthorizingRealm {
@@ -28,7 +32,11 @@ public class UserRealm extends AuthorizingRealm {
      */
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
+        String userName = (String) SecurityUtils.getSubject().getPrincipal();
         SimpleAuthorizationInfo info=new SimpleAuthorizationInfo();
+        Set<String> roles = new HashSet<>();
+        roles.add("teacher");
+        info.setRoles(roles);
         return info;
     }
 
