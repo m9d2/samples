@@ -55,17 +55,19 @@ INSERT INTO `role` VALUES ('3', 'student');
 -- ----------------------------
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
-  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '用户主键',
-  `username` varchar(20) NOT NULL COMMENT '用户名',
-  `password` varchar(20) NOT NULL COMMENT '密码',
-  `role_id` int(11) DEFAULT NULL COMMENT '外键关联role表',
-  PRIMARY KEY (`id`),
-  KEY `role_id` (`role_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+`id` int(11) NOT NULL AUTO_INCREMENT COMMENT '用户主键',
+`username` varchar(20) NOT NULL COMMENT '用户名',
+`password` varchar(50) NOT NULL COMMENT '密码',
+`salt` varchar(50) NOT NULL COMMENT '盐值',
+`role_id` int(11) NOT NULL COMMENT '外键关联role表',
+PRIMARY KEY (`id`),
+KEY `role_id` (`role_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of user
 -- ----------------------------
-INSERT INTO `user` VALUES ('1', 'csdn1', '123456', '1');
-INSERT INTO `user` VALUES ('2', 'csdn2', '123456', '2');
-INSERT INTO `user` VALUES ('3', 'csdn3', '123456', '3');
+INSERT INTO `user` VALUES ('1', 'csdn1', 'b5040da053372bdcdef5f9bf602f5858', '15e76e8bdcfc4788860120d45dfb54ed', '1');
+INSERT INTO `user` VALUES ('2', 'csdn2', '8234bc2ad84d8c52894135f751e09de1', '1d4316c564a04bea95b1476463e95180', '2');
+INSERT INTO `user` VALUES ('3', 'csdn3', '1d9d0bdfa309ebe5a263ff057861b6f2', '0aae75172866450e8e27a6df76859d08', '3');
+

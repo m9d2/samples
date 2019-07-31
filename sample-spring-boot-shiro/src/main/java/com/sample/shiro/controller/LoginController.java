@@ -27,9 +27,8 @@ public class LoginController {
             //当前用户是否已登录
             if (!currentUser.isAuthenticated()) {
                 UsernamePasswordToken token = new UsernamePasswordToken(username, password, rememberMe);
-                token.setRememberMe(true);
                 currentUser.login(token);
-                map.put("code", 1);
+                map.put("code", 200);
                 map.put("message", "login success");
             }
         } catch (AuthenticationException e) {
@@ -38,12 +37,4 @@ public class LoginController {
         return map;
     }
 
-    @RequestMapping(value = "/getUserInfo", method = RequestMethod.GET)
-    @ResponseBody
-    public Map<String, Object> getUserInfo() {
-        Map<String, Object> map = new HashMap<>();
-        map.put("code", 1);
-        map.put("message", "success");
-        return map;
-    }
 }

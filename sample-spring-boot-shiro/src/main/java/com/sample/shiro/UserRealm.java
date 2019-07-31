@@ -1,8 +1,9 @@
 package com.sample.shiro;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.sample.shiro.common.exception.ServiceException;
+import com.sample.shiro.infrastructure.domain.model.Role;
 import com.sample.shiro.infrastructure.domain.model.User;
+import com.sample.shiro.infrastructure.domain.repository.RoleRepository;
 import com.sample.shiro.infrastructure.domain.repository.UserRepository;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
@@ -11,6 +12,7 @@ import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
+import org.apache.shiro.crypto.hash.Md5Hash;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,12 +21,18 @@ import org.springframework.util.ObjectUtils;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
+/**
+ * 认证及授权
+ */
 @Component
 public class UserRealm extends AuthorizingRealm {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private RoleRepository roleRepository;
 
     /**
      * 授权(验证权限时调用)
@@ -33,9 +41,11 @@ public class UserRealm extends AuthorizingRealm {
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
         String userName = (String) SecurityUtils.getSubject().getPrincipal();
+        User user = userRepository.getOne(new QueryWrapper<User>().eq("username", userName));
+        Role role = roleRepository.getOne(new QueryWrapper<Role>().eq("id", user.getRoleId()));
         SimpleAuthorizationInfo info=new SimpleAuthorizationInfo();
         Set<String> roles = new HashSet<>();
-        roles.add("teacher");
+        roles.add(role.getRolename());
         info.setRoles(roles);
         return info;
     }
@@ -50,12 +60,20 @@ public class UserRealm extends AuthorizingRealm {
         String password = new String((char[]) token.getCredentials());
         User user = userRepository.getOne(new QueryWrapper<User>().eq("username", userName));
         if (ObjectUtils.isEmpty(user)) {
-            throw new ServiceException("用户名错误");
+            throw new AuthenticationException("用户名错误");
         }
-        if (!user.getPassword().equals(password)) {
-            throw new ServiceException("密码错误");
+        String p = String.valueOf(new Md5Hash(password, user.getSalt(), 1024));
+        if (!user.getPassword().equals(p)) {
+            throw new AuthenticationException("密码错误");
         }
         return new SimpleAuthenticationInfo(userName, password, getName());
     }
 
+    public static void main(String[] args) {
+        Object password = "123456"; //密码原值
+        String salt = UUID.randomUUID().toString().replace("-", ""); //盐值
+        System.out.println(salt);
+        Object result = new Md5Hash(password, salt, 1024);
+        System.out.println(result);
+    }
 }

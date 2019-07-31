@@ -16,8 +16,7 @@ public class ShiroConfig {
     //将自己的验证方式加入容器
     @Bean
     public UserRealm getUserRealm() {
-        UserRealm userRealm = new UserRealm();
-        return userRealm;
+        return new UserRealm();
     }
 
     //权限管理，配置主要是Realm的管理认证
@@ -33,12 +32,13 @@ public class ShiroConfig {
     public ShiroFilterFactoryBean shiroFilterFactoryBean(DefaultWebSecurityManager securityManager) {
         ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
         shiroFilterFactoryBean.setSecurityManager(securityManager);
-        Map<String,String> map = new HashMap<String, String>();
+        Map<String,String> map = new HashMap<>();
         //登出
         map.put("/logout","logout");
         //对所有用户认证
         map.put("/**","authc");
-        map.put("/getUserInfo", "roles[admin]");
+        map.put("/admin/**", "roles[admin]");
+        map.put("/teacher/**", "roles[teacher]");
         //登录
         shiroFilterFactoryBean.setLoginUrl("/login");
         //首页
@@ -56,4 +56,5 @@ public class ShiroConfig {
         authorizationAttributeSourceAdvisor.setSecurityManager(securityManager);
         return authorizationAttributeSourceAdvisor;
     }
+
 }

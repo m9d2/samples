@@ -29,6 +29,9 @@ public class User extends BaseEntity {
     @ApiModelProperty(value = "密码")
     private String password;
 
+    @ApiModelProperty(value = "盐值")
+    private String salt;
+
     @ApiModelProperty(value = "外键关联role表")
     private Integer roleId;
 
