@@ -1,8 +1,10 @@
 package com.sample.shiro;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.sample.shiro.infrastructure.domain.model.Permission;
 import com.sample.shiro.infrastructure.domain.model.Role;
 import com.sample.shiro.infrastructure.domain.model.User;
+import com.sample.shiro.infrastructure.domain.repository.PermissionRepository;
 import com.sample.shiro.infrastructure.domain.repository.RoleRepository;
 import com.sample.shiro.infrastructure.domain.repository.UserRepository;
 import org.apache.shiro.SecurityUtils;
@@ -33,6 +35,8 @@ public class UserRealm extends AuthorizingRealm {
     private UserRepository userRepository;
     @Autowired
     private RoleRepository roleRepository;
+    @Autowired
+    private PermissionRepository permissionRepository;
 
     /**
      * 授权(验证权限时调用)
@@ -43,10 +47,16 @@ public class UserRealm extends AuthorizingRealm {
         String userName = (String) SecurityUtils.getSubject().getPrincipal();
         User user = userRepository.getOne(new QueryWrapper<User>().eq("username", userName));
         Role role = roleRepository.getOne(new QueryWrapper<Role>().eq("id", user.getRoleId()));
+        Permission permission = permissionRepository.getOne(new QueryWrapper<Permission>().eq("role_id", user.getRoleId()));
         SimpleAuthorizationInfo info=new SimpleAuthorizationInfo();
         Set<String> roles = new HashSet<>();
         roles.add(role.getRolename());
         info.setRoles(roles);
+        if (!ObjectUtils.isEmpty(permission)) {
+            Set<String> permissions = new HashSet<>();
+            permissions.add(permission.getPermissionName());
+            info.setStringPermissions(permissions);
+        }
         return info;
     }
 
