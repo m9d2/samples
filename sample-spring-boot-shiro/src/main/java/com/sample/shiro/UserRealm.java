@@ -14,16 +14,15 @@ import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
-import org.apache.shiro.crypto.hash.Md5Hash;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
+import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
 /**
  * 认证及授权
@@ -67,23 +66,11 @@ public class UserRealm extends AuthorizingRealm {
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
         String userName = token.getPrincipal().toString();
-        String password = new String((char[]) token.getCredentials());
         User user = userRepository.getOne(new QueryWrapper<User>().eq("username", userName));
         if (ObjectUtils.isEmpty(user)) {
             throw new AuthenticationException("用户名错误");
         }
-        String p = String.valueOf(new Md5Hash(password, user.getSalt(), 1024));
-        if (!user.getPassword().equals(p)) {
-            throw new AuthenticationException("密码错误");
-        }
-        return new SimpleAuthenticationInfo(userName, password, getName());
+        return new SimpleAuthenticationInfo(user, user.getPassword(), ByteSource.Util.bytes(user.getSalt()), getName());
     }
 
-    public static void main(String[] args) {
-        Object password = "123456"; //密码原值
-        String salt = UUID.randomUUID().toString().replace("-", ""); //盐值
-        System.out.println(salt);
-        Object result = new Md5Hash(password, salt, 1024);
-        System.out.println(result);
-    }
 }

@@ -1,6 +1,7 @@
 package com.sample.shiro.config;
 
 import com.sample.shiro.UserRealm;
+import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
@@ -17,7 +18,9 @@ public class ShiroConfig {
     //将自己的验证方式加入容器
     @Bean
     public UserRealm getUserRealm() {
-        return new UserRealm();
+        UserRealm userRealm = new UserRealm();
+        userRealm.setCredentialsMatcher(hashedCredentialsMatcher());
+        return userRealm;
     }
 
     //权限管理，配置主要是Realm的管理认证
@@ -49,7 +52,7 @@ public class ShiroConfig {
         return shiroFilterFactoryBean;
     }
 
-    //加入注解的使用，不加入这个注解不生效
+    //开启shiro aop注解支持
     @Bean
     public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor(DefaultWebSecurityManager securityManager) {
         AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor = new AuthorizationAttributeSourceAdvisor();
@@ -65,4 +68,12 @@ public class ShiroConfig {
         return defaultAdvisorAutoProxyCreator;
     }
 
+    //凭证匹配器，密码校验交给Shiro的SimpleAuthenticationInfo进行处理
+    @Bean
+    public HashedCredentialsMatcher hashedCredentialsMatcher() {
+        HashedCredentialsMatcher matcher = new HashedCredentialsMatcher();
+        matcher.setHashAlgorithmName("MD5");
+        matcher.setHashIterations(1024); //散列的次数
+        return matcher;
+    }
 }
