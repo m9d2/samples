@@ -23,6 +23,8 @@ public class Role extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
 
+    private int id;
+
     @ApiModelProperty(value = "角色名称")
     private String rolename;
 

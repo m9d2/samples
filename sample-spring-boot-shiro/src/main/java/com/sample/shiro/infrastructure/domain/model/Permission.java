@@ -23,6 +23,8 @@ public class Permission extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
 
+    private int id;
+
     @ApiModelProperty(value = "权限名")
     private String permissionName;
 

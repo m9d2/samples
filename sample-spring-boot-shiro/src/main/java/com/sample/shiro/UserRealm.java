@@ -43,7 +43,7 @@ public class UserRealm extends AuthorizingRealm {
      */
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-        String userName = (String) SecurityUtils.getSubject().getPrincipal();
+        String userName = ((User) SecurityUtils.getSubject().getPrincipal()).getUsername();
         User user = userRepository.getOne(new QueryWrapper<User>().eq("username", userName));
         Role role = roleRepository.getOne(new QueryWrapper<Role>().eq("id", user.getRoleId()));
         Permission permission = permissionRepository.getOne(new QueryWrapper<Permission>().eq("role_id", user.getRoleId()));

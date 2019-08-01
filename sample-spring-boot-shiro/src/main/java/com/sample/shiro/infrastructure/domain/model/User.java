@@ -23,6 +23,8 @@ public class User extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
 
+    private int id;
+
     @ApiModelProperty(value = "用户名")
     private String username;
 
