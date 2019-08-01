@@ -16,6 +16,14 @@ import java.util.Map;
 @Controller
 public class LoginController {
 
+    /**
+     * 登陆
+     * @param username
+     * @param password
+     * @param rememberMe
+     * @return
+     * @throws AuthenticationException
+     */
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     @ResponseBody
     public Map<String, Object> login(@RequestParam("username") String username,
@@ -27,6 +35,7 @@ public class LoginController {
             //当前用户是否已登录
             if (!currentUser.isAuthenticated()) {
                 UsernamePasswordToken token = new UsernamePasswordToken(username, password, rememberMe);
+                token.setRememberMe(rememberMe);
                 currentUser.login(token);
                 map.put("code", 200);
                 map.put("message", "login success");
@@ -34,6 +43,21 @@ public class LoginController {
         } catch (AuthenticationException e) {
             throw new AuthenticationException("用户名或密码错误", e.getCause());
         }
+        return map;
+    }
+
+    /**
+     * 自定义登陆 不使用shiro自带登出
+     * @return
+     */
+    @RequestMapping(value = "/logout", method = RequestMethod.GET)
+    @ResponseBody
+    public Map<String, Object> logout() {
+        Subject subject = SecurityUtils.getSubject();
+        subject.logout();
+        Map<String, Object> map = new HashMap<>();
+        map.put("code", 200);
+        map.put("message", "logout success");
         return map;
     }
 
