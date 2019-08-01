@@ -4,6 +4,7 @@ import com.sample.shiro.UserRealm;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.codec.Base64;
 import org.apache.shiro.session.mgt.SessionManager;
+import org.apache.shiro.session.mgt.eis.JavaUuidSessionIdGenerator;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.CookieRememberMeManager;
@@ -134,8 +135,14 @@ public class ShiroConfig {
     public RedisSessionDAO sessionDAO(){
         RedisSessionDAO sessionDAO = new RedisSessionDAO();
         sessionDAO.setExpire(60*60*6);
+        sessionDAO.setSessionIdGenerator(sessionIdGenerator());
         sessionDAO.setRedisManager(redisManager());
         return sessionDAO;
+    }
+
+    @Bean
+    public JavaUuidSessionIdGenerator sessionIdGenerator(){
+        return new JavaUuidSessionIdGenerator();
     }
 
     //缓存管理对象
