@@ -37,9 +37,9 @@ INSERT INTO `permission` VALUES ('1', 'article:add', '3');
 -- ----------------------------
 DROP TABLE IF EXISTS `role`;
 CREATE TABLE `role` (
-                        `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
-                        `rolename` varchar(20) DEFAULT NULL COMMENT '角色名称',
-                        PRIMARY KEY (`id`)
+`id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
+`rolename` varchar(20) DEFAULT NULL COMMENT '角色名称',
+PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
@@ -54,13 +54,13 @@ INSERT INTO `role` VALUES ('3', 'editor');
 -- ----------------------------
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
-                        `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '用户主键',
-                        `username` varchar(20) NOT NULL COMMENT '用户名',
-                        `password` varchar(50) NOT NULL COMMENT '密码',
-                        `salt` varchar(50) NOT NULL COMMENT '盐值',
-                        `role_id` int(11) NOT NULL COMMENT '外键关联role表',
-                        PRIMARY KEY (`id`),
-                        KEY `role_id` (`role_id`)
+`id` int(11) NOT NULL AUTO_INCREMENT COMMENT '用户主键',
+`username` varchar(20) NOT NULL COMMENT '用户名',
+`password` varchar(50) NOT NULL COMMENT '密码',
+`salt` varchar(50) NOT NULL COMMENT '盐值',
+`role_id` int(11) NOT NULL COMMENT '外键关联role表',
+PRIMARY KEY (`id`),
+KEY `role_id` (`role_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
