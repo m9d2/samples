@@ -14,4 +14,4 @@
 - 安装mysql数据库，执行sample_shiro.sql脚本
 - 配置mysql连接信息
 - 本地安装redis
-- run SampleSpringBootShiroApplication
+- Run SampleSpringBootShiroApplication
