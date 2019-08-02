@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <meta charset="UTF-8">
+    <title>article</title>
+    <link rel="stylesheet" th:href="@{/css/layui.css}" type="text/css">
+</head>
+<script rel="text/javascript" th:src="@{/layui.all.js}"></script>
+<body>
+<div th:replace="fragments/header :: header"></div>
+<div>
+    <table class="layui-table">
+        <thead>
+        <tr>
+            <td>ID</td>
+            <td>NAME</td>
+            <td>DATE</td>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="article : ${data}">
+            <td th:text="${article.id}"></td>
+            <td th:text="${article.name}"></td>
+            <td th:text="${article.createDate}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>

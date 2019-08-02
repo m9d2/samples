@@ -1,0 +1,14 @@
+server:
+  port: 8080
+
+spring:
+  thymeleaf:
+    #指定模板所在目录
+    prefix: classpath:/templates/
+    #检查模板路径是否存在
+    check-template-location: true
+    #是否缓存，开发模式下设置为false，避免改了模板还要重启服务器，线上设置为true，可以提高性能。
+    cache: false
+    suffix: .html
+    encoding: UTF-8
+    mode: HTML
