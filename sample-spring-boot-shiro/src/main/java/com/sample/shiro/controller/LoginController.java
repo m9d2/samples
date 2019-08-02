@@ -47,7 +47,7 @@ public class LoginController {
     }
 
     /**
-     * 自定义登陆 不使用shiro自带登出
+     * 自定义登出 不使用shiro自带登出
      * @return
      */
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
