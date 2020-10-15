@@ -22,16 +22,16 @@ public class SecurityUserDetails extends SysUser implements UserDetails {
         return authorities;
     }
 
-    public SecurityUserDetails(String userName, Collection<? extends GrantedAuthority> authorities){
+    public SecurityUserDetails(String userName, String password, Collection<? extends GrantedAuthority> authorities) {
         this.authorities = authorities;
         this.setUsername(userName);
-        String encode = new BCryptPasswordEncoder().encode("123");
-        this.setPassword(encode);
+        this.setPassword(new BCryptPasswordEncoder().encode(password));
         this.setAuthorities(authorities);
     }
 
     /**
      * 账户是否过期
+     *
      * @return
      */
     @Override
@@ -41,6 +41,7 @@ public class SecurityUserDetails extends SysUser implements UserDetails {
 
     /**
      * 是否禁用
+     *
      * @return
      */
     @Override
@@ -50,6 +51,7 @@ public class SecurityUserDetails extends SysUser implements UserDetails {
 
     /**
      * 密码是否过期
+     *
      * @return
      */
     @Override
@@ -59,6 +61,7 @@ public class SecurityUserDetails extends SysUser implements UserDetails {
 
     /**
      * 是否启用
+     *
      * @return
      */
     @Override

@@ -27,8 +27,8 @@ public class JwtUserDetailsService implements UserDetailsService {
             throw new CustomException("用户不存在！", HttpStatus.UNPROCESSABLE_ENTITY);
         }
         List<GrantedAuthority> authorityList = new ArrayList<>();
-        authorityList.add(new SimpleGrantedAuthority("ROLE_USER"));
-        return new SecurityUserDetails(username,authorityList);
+        authorityList.add(new GrantedAuthorityImpl("ROLE_USER"));
+        return new SecurityUserDetails(username, sysUser.getPassword(), authorityList);
     }
 
 }

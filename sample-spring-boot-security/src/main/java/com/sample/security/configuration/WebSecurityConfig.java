@@ -1,8 +1,9 @@
 package com.sample.security.configuration;
 
 import com.sample.security.security.JwtAuthenticationEntryPoint;
+import com.sample.security.security.JwtAuthenticationProvider;
 import com.sample.security.security.JwtAuthorizationTokenFilter;
-import com.sample.security.security.JwtUserDetailsService;
+import com.sample.security.security.JwtLogoutSuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,8 +15,7 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
@@ -24,15 +24,15 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     @Autowired
-    JwtAuthorizationTokenFilter authenticationTokenFilter;
+    private JwtAuthorizationTokenFilter authenticationTokenFilter;
     @Autowired
-    JwtUserDetailsService jwtUserDetailsService;
+    private UserDetailsService userDetailsService;
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(jwtUserDetailsService).passwordEncoder(passwordEncoder());
+        auth.authenticationProvider(new JwtAuthenticationProvider(userDetailsService));
     }
 
     @Override
@@ -50,9 +50,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         //禁用session
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
+        //访问控制时登录状态检查过滤器
         http.addFilterBefore(authenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
 
         http.exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint);
+
+        http.logout().logoutSuccessHandler(new JwtLogoutSuccessHandler());
     }
 
     @Override
@@ -63,12 +66,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/swagger-ui/**")
                 .antMatchers("/configuration/**")
                 .antMatchers("/webjars/**")
+                .antMatchers("/doc.html")
                 .antMatchers("/public");
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(10);
     }
 
     @Bean

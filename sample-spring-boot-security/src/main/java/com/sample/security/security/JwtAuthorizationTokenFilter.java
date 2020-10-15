@@ -1,7 +1,7 @@
 package com.sample.security.security;
 
-import com.sample.security.common.utils.JwtTokenUtil;
 import com.sample.security.common.exception.CustomException;
+import com.sample.security.common.utils.JwtTokenUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,15 +39,23 @@ public class JwtAuthorizationTokenFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
-        final String requestHeader = request.getHeader(this.tokenHeader);
+        checkAuthentication(request);
+        chain.doFilter(request, response);
+    }
+
+    /**
+     * 检查token
+     *
+     * @param request
+     */
+    private void checkAuthentication(HttpServletRequest request) {
+        final String authToken = request.getHeader(this.tokenHeader);
         String username = null;
-        String authToken = null;
-        if (requestHeader != null && requestHeader.startsWith("Bearer ")) {
-            authToken = requestHeader.substring(7);
+        if (authToken != null) {
             try {
                 username = jwtTokenUtil.getUsernameFromToken(authToken);
             } catch (ExpiredJwtException e) {
-                throw new CustomException("无效token", HttpStatus.HTTP_VERSION_NOT_SUPPORTED);
+                throw new CustomException("无效token", HttpStatus.UNAUTHORIZED);
             }
         }
 
@@ -61,6 +69,5 @@ public class JwtAuthorizationTokenFilter extends OncePerRequestFilter {
             }
 
         }
-        chain.doFilter(request, response);
     }
 }

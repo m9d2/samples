@@ -7,6 +7,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.impl.DefaultClock;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -21,7 +22,7 @@ public class JwtTokenUtil implements Serializable {
     private static final long serialVersionUID = -3301605591108950415L;
 
     @Value("${jwt.secret}")
-    private  String secret;
+    private String secret;
 
     @Value("${jwt.expiration}")
     private Long expiration;
@@ -30,6 +31,11 @@ public class JwtTokenUtil implements Serializable {
     private String tokenHeader;
 
     private Clock clock = DefaultClock.INSTANCE;
+
+    public String generateToken(Authentication authentication) {
+        Map<String, Object> claims = new HashMap<>();
+        return doGenerateToken(claims, authentication.getName());
+    }
 
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
