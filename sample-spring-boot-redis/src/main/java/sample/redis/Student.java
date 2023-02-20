@@ -1,21 +1,26 @@
 package sample.redis;
 
-import lombok.Data;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
-import java.io.Serializable;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "student")
-public class Student implements Serializable {
-
+public class Student {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
     private Long id;
 
+    @Column(name = "name")
     private String name;
 
+    @Column(name = "age")
     private Integer age;
 
 }
