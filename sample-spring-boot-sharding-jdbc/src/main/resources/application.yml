@@ -1,0 +1,28 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/sample?createDatabaseIfNotExist=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&autoReconnect=true&failOverReadOnly=false&zeroDateTimeBehavior=convertToNull&allowPublicKeyRetrieval=true&useSSL=false
+    username: root
+    password: 123456
+    type: com.zaxxer.hikari.HikariDataSource
+
+  shardingsphere:
+    props:
+      show-sql: true
+    datasource:
+      names: master
+      master:
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        jdbc-url: jdbc:mysql://127.0.0.1:3306/sample?createDatabaseIfNotExist=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&autoReconnect=true&failOverReadOnly=false&zeroDateTimeBehavior=convertToNull&allowPublicKeyRetrieval=true&useSSL=false
+        username: root
+        password: 123456
+        type: com.zaxxer.hikari.HikariDataSource
+    sharding:
+      tables:
+        user:
+          actual-data-nodes: master.user_${0..1}
+          table-strategy:
+            inline:
+              sharding-column: id
+              algorithm-expression: user_${id % 10}
+
