@@ -1,0 +1,35 @@
+
+spring:
+  profiles:
+    active: dev
+  application:
+    name: consul-sample
+  cloud:
+    consul:
+      host: 127.0.0.1
+      port: 8500
+      discovery:
+        serviceName: ${spring.application.name}
+        register: true
+        tags: version=1.0, author=gao
+        health-check-interval: 10s
+        instance-id: ${spring.application.name}:${spring.cloud.client.ip-address}
+        health-check-url: http://${spring.cloud.client.ip-address}:${server.port}${server.servlet.context-path}/actuator/health
+        hostname: ${spring.cloud.client.ip-address}
+        acl-token: 6e3ea5f7-5115-6466-0729-3ab4bb37438f
+      config:
+        # 启用 consul 配置中心
+        enabled: true
+        # 基础文件夹，默认值 config
+        prefixes: config
+        format: yaml
+        # 环境分隔符，默认值 ","
+        profile-separator: ","
+        watch:
+          # 启用配置自动刷新
+          enabled: true
+          # 刷新频率，单位：毫秒
+          delay: 1000
+        data-key: data
+server:
+  port: 8080
